@@ -1,0 +1,685 @@
+---
+title: "Google Data Analytics Capstone Project"
+names: "Sri Wahyuni"
+output: html_notebook
+---
+
+Table of Contents
+
+1. Summary
+  1.1 About the Company
+  1.2 Scenario
+  1.3 Analysis Questions
+  1.4 Data Source
+2. Ask Phase
+  2.1 Business Plan
+  2.2 Stakeholders
+3. Prepare Phase
+  3.1 Data and Organization
+  3.2 Credibility and Integrity
+  3.3 Licensing, Privacy, Accessibility
+4. Process Phase
+  4.1 Installing and import packages / libraries
+  4.2 Loading data set
+  4.3 Checking the head data
+  4.4 Cleaning the data
+  4.5 Merger data set
+5. Analyze Phase
+  5.1 Smart Device Usage Analysis
+    5.1.1 Users Wear Duration usage smart device patterns (During Day)
+    5.1.2 Users Wear Duration usage smart device patterns (During Sleep)
+    5.1.3 Time user usage smart device pattern
+    5.1.4 Hourly Intensities user usage smart device pattern
+  5.2 Steps Analysis
+    5.2.1 User Activity Status Pattern
+    5.2.2 Week
+    5.2.3 when are users most active?
+  5.3 Sleep Analysis
+    5.3.1 User Daily Sleep Averages Patterns
+    5.3.2 when are users most people are asleep?
+  5.4 Calories Expenditure Analysis
+  5.5 Heart Rate Analysis
+  5.6  Correlations
+    5.6.1 Daily steps vs daily calorie expenditure
+    5.6.2 Daily Minutes Asleep vs Total Calorie Expenditure
+6. Act Phase (Recommendations)
+7. Reference
+  
+
+
+
+
+# 1. Summary
+
+## 1.1 About the Company
+
+Bellabeat adalah perusahaan high-tech manufacturer yang berfokus pada produk kesehatan khusus wanita. Bellabeat didirikan pada tahun 2013 dan telah berkembang pesat dan dengan cepat memposisikan dirinya sebagai perusahaan kesehatan berbasis teknologi wanita. Pada tahun 2016, Bellabeat telah membuka kantor diseluruh dunia dan meluncurkan beberapa produk. Perusahaan telah berinvestasi di media periklanan tradisional, seperti radio, papan reklame luar rumah, media cetak, dan televisi, tetapi berfokus pada pemasaran digital secara ekstensif. Bellabeat berinvestasi sepanjang tahun di Google Search, memelihara halaman Facebook dan Instagram yang aktif, dan secara konsisten melibatkan konsumen di Twitter. Selain itu, Bellabeat meluncurkan iklan video di Youtube dan menampilkan iklan di Google Display Network untuk mendukung kampanye seputar tanggal pemasaran penting.
+
+## 1.2 Scenario
+
+Saya adalah seorang data analis junior yang bekerja di tim pemasaran di Bellabeat. Bellabeat adalah perusahaan kecil yang sukses, tetapi memiliki potensi untuk menjadi pemain yang lebih besar di pasar perangkat pintar globa.Mengumpulkan data tentang aktivitas, tidur, stres, dan kesehatan reproduksi telah memungkinkan Bellabeat untuk memberdayakan wanita dengan pengetahuan tentang kesehatan dan kebiasaan mereka sendiri.
+
+Urška Sršen, salah satu pendiri dan Chief Creative Officer Bellabeat, percaya bahwa menganalisis data kebugaran dari perangkat pintar dapat membantu membuka peluang pertumbuhan baru bagi perusahaan. Urška Sršen meminta saya untuk menganalisis data penggunaan perangkat pintar untuk mendapatkan wawasan tentang bagaimana konsumen menggunakan perangkat pintar non-Bellabeat. Kemudian memilih satu produk Bellabeat untuk menerapkan wawasan ini dalam presentasi.
+
+
+## 1.3 Analysis Questions
+
+1.	Apa saja tren dalam penggunaan perangkat pintar?
+
+2.	Bagaimana tren ini dapat diterapkan pada pelanggan Bellabeat?
+
+3.	Bagaimana tren ini dapat membantu memengaruhi strategi pemasaran Bellabeat?
+
+
+## 1.4 Data Source
+Data yang digunakan **FitBit Fitness Tracker Data** dari kaggle, [klik disini]("https://www.kaggle.com/datasets/arashnic/fitbit") untuk langsung menuju dataset.
+
+# 2. Ask Phase
+
+## 2.1 Business Plan
+
+Menganalisis data pengguna smart device untuk mendapat wawasan tentang bagaimana konsumen menggunakan smart device mereka dan memperoleh rekomendasi tetang tren untuk membantu penyusunan strategi pemasaran Bellabeat.
+
+## 2.2 Stakeholders
+
+1. **Urška Sršen**: Salah satu pendiri Bellabeat dan Chief Creative Oﬃcer
+
+2. **Sando Mur**: Matematikawan dan salah satu pendiri Bellabeat; anggota kunci dari tim eksekutif Bellabeat
+
+3. **Tim analisis pemasaran Bellabeat**: Sebuah tim analis data yang bertanggung jawab untuk mengumpulkan, menganalisis, dan melaporkan data yang dapat membantu penyusunan strategi pemasaran Bellabeat. Saya bergabung dengan tim ini enam bulan lalu dan sibuk mempelajari misi dan tujuan bisnis Bellabeat — serta bagaimana Saya, sebagai analis data junior, dapat membantu Bellabeat untuk mencapainya.
+
+# 3. Prepare Phase
+
+## 3.1 Data and Organization
+
+Dataset berisi pelacak kebugaran pribadi yang peroleh dari 30 pengguna fitbit. pengguna tersebut memenuhi syarat dan menyetujui mengirim data pelacak pribadi, termasuk _output_ tiap menit untuk aktivitas fisik, detak jantung, dan pemantauan tidur. Hal ini mencangkup informasi tentang aktivitas harian, langkah, dan detak jantung yang dapat digunakan untuk mengeksplorasi kebiasaan pengguna. 
+
+## 3.2 Credibility and Integrity
+
+Berdasarkan _**ROCCC**_ ( _Reliable, Original, Comprehensive, Current, Cited_ ) 
+
+## 3.3 Licensing, privacy, accessibility
+
+Data dapat diakses secara publik atau dapat diakses oleh siapa saja, Sehingga dataset ini dapat dengan bebas digunakan, diakses, dimodifikasi atau di distribusi tanpa perlu izin sebelumnya.
+
+# 4. Process Phase
+
+## 4.1 Installing and import packages / libraries
+```{r}
+# Install packages
+#install.packages('tidyverse')
+#install.packages('janitor')
+```
+
+```{r}
+# Import libraries
+library(tidyverse)
+library(janitor)
+library(dplyr)
+```
+
+## 4.2 Loading dataset
+
+```{r}
+# Loading data set daily
+weight_log <- read_csv("weightLogInfo_merged.csv")
+sleep_day <- read_csv("sleepDay_merged.csv")
+daily_activity <- read_csv("dailyActivity_merged.csv")
+heartrate <- read_csv("heartrate_seconds_merged.csv")
+hourly_intensities <- read_csv("hourlyIntensities_merged.csv")
+hourly_steps <- read_csv("hourlySteps_merged.csv")
+hourly_calories <- read_csv("hourlyCalories_merged.csv")
+```
+
+## 4.3 Checking the heads
+
+```{r}
+# Checking the heads
+head(daily_activity)
+str(daily_activity)
+
+head(heartrate)
+str(heartrate)
+
+head(sleep_day)
+str(sleep_day)
+
+head(weight_log)
+str(weight_log)
+
+head(hourly_calories)
+str(hourly_calories)
+
+head(hourly_intensities)
+str(hourly_intensities)
+
+head(hourly_steps)
+str(hourly_steps)
+```
+
+
+## 4.4 Cleaning the data 
+
+Pada tahap cleaning akan di cek data yang memiliki missing value, duplicate, changing data type dan  rename columns.
+
+### Checking missing values
+```{r}
+# Checking missing value
+sum(is.na(daily_activity))
+sum(is.na(heartrate))
+sum(is.na(sleep_day))
+sum(is.na(weight_log))
+sum(is.na(hourly_calories))
+sum(is.na(hourly_intensities))
+sum(is.na(hourly_steps))
+```
+Terdapat missing values pada tabel **weight_log** yaitu sebanyak 65, akan dicek data manakah yang memiliki missing values
+
+```{r}
+# Checking indeks missing values
+apply(is.na(weight_log),2,which)
+```
+
+Missing value hanya pada kolum **Fat** dengan jumlah hampir seluruhnya tidak memiliki data, Maka kolom **Fat akan dihapus**
+
+```{r}
+# Cleaning column Fat in table weigh_log
+weight_log <- weight_log %>% 
+  select(-Fat)
+```
+
+
+
+```{r}
+# Checking missing values weight_log is gone
+apply(is.na(weight_log),2, which)
+```
+Missing values sudah berhasil di handle
+
+### Checking duplicate data
+
+```{r}
+# Checking duplicate data
+sum(duplicated(daily_activity))
+sum(duplicated(heartrate))
+sum(duplicated(sleep_day))
+sum(duplicated(weight_log))
+sum(duplicated(hourly_calories))
+sum(duplicated(hourly_intensities))
+sum(duplicated(hourly_steps))
+```
+```{r}
+# Checking data duplicate in sleep_day
+sleep_day[duplicated(sleep_day), ]
+```
+```{r}
+# Remove duplicate data
+sleep_day <- sleep_day %>%
+  distinct()%>%
+  drop_na()
+```
+
+```{r}
+# Checking duplicate is gone
+sum(duplicated(sleep_day))
+```
+### Changing data type
+
+Semua dataset memiliki tipe data character yang seharus tipe data date, makan akan diubah
+
+```{r}
+# Changing data type character to date and datetime
+daily_activity$ActivityDate <- mdy(daily_activity$ActivityDate)
+heartrate$Time <- mdy_hms(heartrate$Time)
+sleep_day$SleepDay <- mdy_hms(sleep_day$SleepDay)
+weight_log$Date <- mdy_hms(weight_log$Date)
+hourly_calories$ActivityHour <- mdy_hms(hourly_calories$ActivityHour)
+hourly_intensities$ActivityHour <- mdy_hms(hourly_intensities$ActivityHour)
+hourly_steps$ActivityHour <- mdy_hms(hourly_steps$ActivityHour)
+```
+
+```{r}
+# Checking the head 
+head(sleep_day)
+```
+
+### Rename columns
+
+Untuk menjaga konsistensi dan format yang sama untuk semua data, maka akan mengubah format semua kolom menjadi huruf kecil
+```{r}
+clean_names(daily_activity)
+daily_activity <- rename_with(daily_activity, tolower)
+
+clean_names(heartrate)
+heartrate <- rename_with(heartrate, tolower)
+
+clean_names(sleep_day)
+sleep_day <- rename_with(sleep_day, tolower)
+
+clean_names(weight_log)
+weight_log <- rename_with(weight_log, tolower)
+
+clean_names(hourly_calories)
+hourly_calories <- rename_with(hourly_calories, tolower)
+
+clean_names(hourly_intensities)
+hourly_intensities <- rename_with(hourly_intensities, tolower)
+
+clean_names(hourly_steps)
+hourly_steps <- rename_with(hourly_steps, tolower)
+```
+
+## 4.5 Mergering datasets
+
+Pada tahap ini tabel daily_activity akan digabungkan dengan tabel sleep_day dengan id dan date sebagai primary keys.
+
+```{r}
+# Merge data
+daily_merged <- merge(x=daily_activity, y=sleep_day, by.x = c("id", "activitydate"), by.y = c("id", "sleepday"))
+```
+
+```{r}
+# Check merge data
+head(daily_merged)
+```
+
+# 5. Analyze Phase
+
+```{r}
+n_distinct(daily_activity$id)
+n_distinct(sleep_day$id)
+n_distinct(weight_log$id)
+n_distinct(heartrate$id)
+n_distinct(hourly_calories$id)
+n_distinct(hourly_intensities$id)
+n_distinct(hourly_steps$id)
+```
+## 5.1 Smart Device Usage Analysis
+
+### 5.1.1 Users Wear Duration usage smart device patterns (During Day)
+
+Pada tahap ini untuk menganalisa berapa sering penggunaan menggunakan smart devicenya selama 1 bulan atau 31 hari (data yang dimiliki hanya 31 hari). Sehingga saya akan membaginya menjadi **4 kategori** pengguna. Berikut bentuk kategorinya:
+
+1. completed use: Kategori pengguna penuh salama 31 hari.
+
+2. high used: Kategori pengguna menggunakan smart device antara 21 - 31 hari setiap bulannya.
+
+3. moderate used: Kategori pengguna menggunakan smart device anatar 11 - 20 hari setiap bulannya.
+
+4. low used: kategori pengguna menggunakan smart device dibawah 10 hari setiap bulannya.
+
+```{r}
+# Create new data frame for smart device used
+daily_used <- daily_activity %>%
+  group_by(id) %>%
+  summarize(days_used = sum(n())) %>% 
+  mutate(category = case_when(
+    days_used == 31 ~ "1. Completed use",
+    days_used >= 21 & days_used <= 31 ~ "2. High Used",
+    days_used >= 11 & days_used <= 20 ~ "3. Moderate Used",
+    days_used >= 1 & days_used <= 10 ~ "4. Low Used"
+  ))
+
+# View new data frame
+head(daily_used)
+```
+Data frame category daily user sudah berhasil dibuat. Selanjutnya membuat visualisasi dengan pie chart, namun sebelumnya akan kita buat persentase setiap category.
+
+
+```{r}
+# Create percentage for daily used
+daily_used_percent <- daily_used %>% 
+  group_by(category) %>% 
+  summarise(num_users = n ()) %>% 
+  mutate(percent = num_users/sum(num_users) * 100) 
+  #mutate(percent = scales::percent(percent))
+
+# Create pie chart
+daily_used_percent %>% 
+  ggplot(aes(x="", y=percent, fill=category)) +
+  geom_bar(stat="identity", width = 1) +
+  coord_polar(theta = "y") +
+  theme_void() +
+  geom_label(aes(label = paste0(sprintf("%.2f", percent), "%")),
+            position = position_stack(vjust = 0.5), show.legend = FALSE) +
+  scale_fill_manual(values = c("#adf7b6", "#fcf5c7", "#ffee93", "#ffc09f" )) +
+  #scale_fill_gradient(low="orange", high = "green") +
+  labs(title = "User Wear Duration of Smart Device")
+
+print(daily_used_percent)
+  
+```
+Hasil analisis penggunaan smart device menunjukan sebagian besar (63.6% atau 21 orang) menggunakan smart devicenya setiap hari sesuai dengan rentan waktu pengumpulan dataset. Selanjutnya sebesar 24.2 % menggunakan smart device 21 sampai 30 hari. Kemudian terdapat 3 user atau 9.1% yang menggunakan smart device salama 11 sampai 20 hari. Dan paling rendah terdapat satu pengguna yang menggunakan smart devicenya hanya 1 hari dalam rentan 31 hari (1 bulan). 
+
+### 5.1.2 Users Wear Duration usage smart device patterns (During Sleep)
+
+Sebelumnya kita sudah menganalisis berapa sering pengguna menggunakan smart devicenya. Selanjutkan akan kita lakukan hal sama namun terhdapat sleep recording. Category pengguna akan dibagi menjadi 4 kategori juga.
+
+```{r}
+# create new data frame user wear smart device (During sleep)
+sleep_used <- sleep_day %>% 
+  group_by(id) %>% 
+  summarise(days_used = sum(n())) %>% 
+  mutate(category = case_when(
+    days_used == 31 ~ "1. Completed use",
+    days_used >= 21 & days_used <= 31 ~ "2. High Used",
+    days_used >= 11 & days_used <= 20 ~ "3. Moderate Used",
+    days_used >= 1 & days_used <= 10 ~ "4. Low Used"
+  ))
+head(sleep_used)
+```
+```{r}
+# Create percentage
+sleep_used_percent <- sleep_used %>% 
+  group_by(category) %>% 
+  summarise(num_user = sum(n())) %>% 
+  mutate(percent = num_user/sum(num_user) * 100)
+  #mutate(percent = scales::percent(percent))
+
+# Create pie chart
+sleep_used_percent %>% 
+  ggplot(aes(x="", y=percent, fill=category)) +
+  geom_bar(stat="identity", width = 1) +
+  coord_polar(theta = "y") +
+  theme_void() +
+  geom_label(aes(label = paste0(sprintf("%.2f",  percent), "%")),
+            position = position_stack(vjust = 0.5), show.legend = FALSE) +
+  scale_fill_manual(values = c("#adf7b6", "#fcf5c7", "#ffee93", "#ffc09f" )) +
+  #scale_fill_gradient(low="orange", high = "green") +
+  labs(title = "User Wear Duration of Smart Device\n(During sleep)")
+
+print(sleep_used_percent)
+```
+Penggunaan smart device (sleep) lebih sedikit, dari total 33 pengguna hanya 24 orang yang menggunakan smart device (sleep). Pengguna yang menggunkana smart device setiap hari hanya 3 orang atau 12.5%. Hanya 50% pengguna yang menggunakan smart device lebih dari 21 hari.
+
+
+### 5.1.2 Time user usage smart device pattern
+
+Pada tahap ini akan dicek berapa lama waktu dalam menit/jam pengguna menggunkana smart device setiap harinya. 
+
+```{r}
+# Merger daily_activity and daily_used
+daily_used_merger <- merge(daily_activity, daily_used, by= c("id"))
+
+# View new data frame
+head(daily_used_merger)
+```
+Setelah data di merger, selanjutnya akan membuat kategori total jam yang digunakan pengguna setiap harinya. Berikut kategorinya:
+
+1. All day: Device dipakai seharian.
+
+2. More than half day: Device dipakai lebih dari setengah hari.
+
+3. More less half day: Device dipakai kurang dari setangah hari.
+
+```{r}
+worn_percent <- daily_activity %>% 
+    mutate(total_minutes = veryactiveminutes+fairlyactiveminutes+lightlyactiveminutes+sedentaryminutes) %>% 
+    mutate(worn = case_when(
+        total_minutes == 1440 ~ "1. Full Day",
+        total_minutes >= 720 ~ "2. More than Half Day",
+        total_minutes < 720 ~ "3. Less than Half Day"
+    )) %>% 
+    group_by(worn) %>% 
+    summarise(total_instances = n()) %>% 
+    mutate(percent = total_instances/sum(total_instances)* 100) 
+
+worn_percent
+```
+
+```{r}
+ggplot(worn_percent, aes(x = "", y = percent, fill = worn)) +
+  geom_col(width = 1) +
+  coord_polar(theta = "y") +
+  theme_void() +
+  labs(fill = 'Worn') +
+  ggtitle("Smart Device Usage Duration among Users") +
+  geom_label(
+    aes(label = paste0(sprintf("%.2f", percent), "%")),
+    position = position_stack(vjust = 0.5),
+    show.legend = FALSE,
+  ) +
+  scale_fill_manual(values = c("#adf7b6", "#fcf5c7", "#ffc09f"))
+```
+Hampir sebagian besar ketika user menggunakan smart device mereka akan menggunakannya sepanjang hari terlihat dari hasil yang menggunakan full seharian sebesar 50.85% dan yang lebih dari setengah hari sebesar 46.49%.
+
+### 5.1.3 Hourly Intensities user usage smart device pattern
+
+Pada analisis ini bertujuan untuk melihat pada jam berapa user paling aktive dilakukan
+
+```{r}
+# Create visualization Average hourly intensity
+hourly_intensities %>% 
+  mutate(hour = hour(activityhour)) %>% 
+  group_by(hour) %>% 
+  summarise(total_intensity = sum(totalintensity), avg_intensity = mean(totalintensity)) %>% 
+  ggplot(aes(x = hour, y = avg_intensity/10, fill = avg_intensity)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Hour", y = "Average Intensity") +
+  scale_fill_gradient(low='#98FF98',high='#49796B') +
+  theme(legend.position = 'none')
+
+```
+- Rata-rata intensitas paling tinggi pada pukul 10 kemudiang pukul 17-19.
+
+- Rata-rata paling rendah pada pukul 1 - 4. 
+
+## 5.2 Steps Analysis
+
+### 5.2.1 User Activity Status Pattern
+
+Pada tahap ini akan dilakukan analisis dengan membuat classifikasi aktivitas pengguna setiap harinya dengan menggunakan data **step**. Berikut adalah kategorinya:
+
+- Sedentary: Kategori pengguna dengan jumlah langkah kurang dari < 5000 langkah tiap harinya
+
+- Lightly active: Kategori pengguna dengan jumlah langkah antara 5000 sampai dengan 7499 langkah tiap harinya
+
+- Fairly active: Kategori pengguna dengan jumlah langkah antara 7500 sampai dengan 9999 langkah tiap harinya
+
+- Very active: Kategori pengguna dengan jumlah langkah lebih dari > 10000 langkah tiap harinya
+
+```{r}
+# Calculate average
+daily_average <- daily_merged %>%
+  group_by(id) %>%
+  summarise(mean_steps = mean(totalsteps), mean_sleep = mean(totalminutesasleep), mean_calories = mean(calories))
+
+# Create new data frame
+user_type <- daily_average %>% 
+  mutate(user_type = case_when(
+    mean_steps >= 10000 ~ "1. Very active",
+    mean_steps >= 7500 & mean_steps < 9999 ~ "2. Fairly active",
+    mean_steps >= 5000 & mean_steps < 7499 ~ "3. Lightly active",
+    mean_steps < 5000 ~ "4. Sedentary"
+  ))
+head(user_type)
+```
+```{r}
+# Create percentage
+user_percent <- user_type %>% 
+  group_by(user_type) %>% 
+  summarise(total_n = n()) %>% 
+  mutate(total_sum = sum(total_n)) %>% 
+  group_by(user_type) %>% 
+  summarise(total_percent = total_n/total_sum) %>% 
+  mutate(labels = scales::percent(total_percent))
+
+# Create pie chart
+user_percent %>% 
+  ggplot(aes(x="", y=total_percent, fill= user_type)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.5, size=14, face = "bold")) +
+  #scale_fill_brewer() +
+  geom_text(aes(label = labels),
+            position = position_stack(vjust = 0.5)) +
+  scale_fill_brewer(palette = "Blues") +
+  labs(title = "User type distribution")
+
+```
+### 5.2.2 Week
+
+```{r}
+weekday_steps <- daily_merged %>%
+  mutate(weekday = weekdays(activitydate))
+
+weekday_steps$weekday <-ordered(weekday_steps$weekday, levels=c("Monday", "Tuesday", "Wednesday", "Thursday",
+"Friday", "Saturday", "Sunday"))
+
+ weekday_steps <-weekday_steps%>%
+  group_by(weekday) %>%
+  summarize (daily_steps = mean(totalsteps))
+
+head(weekday_steps)
+```
+```{r}
+ggplot(weekday_steps) +
+  geom_col(aes(weekday, daily_steps)) +
+  geom_hline(yintercept = 7500) +
+  labs(title = "Daily steps per weekday", x = "", y = "") +
+  theme(axis.text.x = element_text(angle = 45,vjust = 0.5, hjust = 1))
+
+```
+### 5.2.3 when are users most active?
+
+
+
+## 5.3 Sleep Analysis
+### 5.3.1 User Daily Sleep Averages Patterns
+
+Pada tahap ini akan membuat categori atau classifikasi berdasarkan rata-rata jam tidur. Berikut adalah kategorinya:
+
+- High sleep: Kategori pengguna dengan rata-rata jam tidur diatas 9 jam.
+- Appropriate: Kategori pengguna dengan rata-rata jam tidur antara 7 dampai dengan 9 jam.
+
+- Low sleep: Kategori pengguna dengan rata-rata jam tidur kurang dari 7 jam.
+
+```{r}
+# Create average sleep in hours
+sleep_type <- sleep_day %>% 
+  group_by(id) %>% 
+  mutate(sleep_hour = totalminutesasleep/60) %>% 
+  summarise(sleep_avg = mean(sleep_hour)) %>% 
+  mutate(sleep_categori = case_when(
+    sleep_avg > 9 ~ "1. High sleep: more than 9",
+    sleep_avg >= 7 & sleep_avg <= 9 ~ "2. Appropriate sleep: between 7-9",
+    sleep_avg < 7 ~"3. Low sleep: less than 7"
+  ))
+
+# create percentage average sleep
+sleep_percent <- sleep_type %>% 
+  group_by(sleep_categori) %>% 
+  summarise(user_n = n()) %>% 
+  mutate(percent = user_n/sum(user_n) * 100)
+
+head(sleep_type)
+sleep_percent
+```
+```{r}
+# Create pie chart
+sleep_percent %>% 
+  ggplot(aes(x="", y=percent, fill= sleep_categori)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  theme_void() +
+  labs(fill = "Sleep category") +
+  ggtitle(" Distribution of daily sleep averages") +
+  geom_label(
+    aes(label = paste0(sprintf("%.2f", percent), "%")),
+        position = position_stack(vjust = 0.5),
+        show.legend = FALSE) +
+  scale_fill_manual(values = c("#adf7b6", "#fcf5c7", "#ffc09f"))
+```
+
+
+### Patterns of user daily record sleep
+
+### What's the hour that most people are asleep?
+
+## 5.4 Calories Expenditure Analysis
+
+Menganalisis jumlah calory yang hilang pada setiap jamnya
+
+```{r}
+hourly_calories %>% 
+  mutate(hour = hour(activityhour)) %>% 
+  group_by(hour) %>% 
+  summarise(avg_calories = mean(calories)) %>% 
+  ggplot(aes(x = hour, y = avg_calories)) +
+  geom_bar(stat = "identity", aes(fill=avg_calories)) +
+  scale_fill_gradient(low='#98FF98',high='#49796B') +
+  labs(title = "Average Calories Expenditure By Hour", y = "Calories in Kcal") +
+  theme(legend.position = "none")
+```
+### 5.5 Heart Rate Analysis
+
+```{r}
+heartrate %>% 
+  mutate(hour = hour(time)) %>% 
+  group_by(hour) %>% 
+  summarise(avg_heartrate = mean(value)) %>% 
+  ggplot(aes(x = hour, y = avg_heartrate)) +
+  geom_bar(stat= "identity", aes(fill=avg_heartrate)) +
+  scale_fill_gradient(low='#98FF98',high='#49796B') +
+  labs(title = "Average Heartrate By Hour", y="Heartrate bpm") +
+  theme(legend.position = "none")
+```
+### 5.6  Correlations
+
+Tahap selanjutnya akan memeriksa apakah ada korelasi antara variabel menggunakan scatter plot
+
+### 5.6.1 Daily steps vs daily calorie expenditure
+
+```{r}
+# create scatter plot 
+daily_activity %>% 
+  ggplot(aes(x = totalsteps, y = calories)) +
+  geom_point() +
+  geom_jitter() +
+  geom_smooth(color = "red") +
+  labs(title = "Daily steps vs daily calorie expenditure", x = "Total steps", y = "Calories Kcal")
+
+# check correlation coefficient
+cor(daily_activity$totalsteps, daily_activity$calories)
+```
+### 5.6.2 Daily Minutes Asleep vs Total Calorie Expenditure
+
+```{r}
+# create scatter plot
+daily_merged %>% 
+ggplot(aes(x = totalminutesasleep, y = calories)) +
+  geom_point() +
+  geom_smooth(color = "red") +
+  labs(title = "Daily Minutes Asleep vs Total Calorie Expenditure", x = "Total Minutes Asleep", y = "Calories Kcal")
+
+# check correlation coefficient
+cor(daily_merged$totalminutesasleep, daily_merged$calories)
+```
+
+
+# 6. Act Phase (Recommendations)
+
+
+
+
+
+# 5. Kesimpulan
+
+# 6. Referensi
+
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4434546/
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+```{r}
+
+```
+
